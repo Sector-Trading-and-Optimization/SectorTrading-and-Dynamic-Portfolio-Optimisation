@@ -2,6 +2,7 @@ from stock_selection_module import FMCG, Tech, Banking
 from sector_base import fetch_price_data
 from optimizer_module import Optimizer
 from Backtestes_Risk_manager import Backtester, RiskManager
+
 from ta.momentum import RSIIndicator
 import pandas as pd
 import numpy as np
@@ -53,7 +54,7 @@ bank_signal_df = pd.DataFrame({top_b: bank_signal})
 
 signals_all = pd.concat([fmcg_signal_df, tech_signal_df, bank_signal_df], axis=1)
 signals_all = signals_all.reindex(prices_all.index).fillna(0).astype(int)
-print("✅ Combined signals created. Shape:", signals_all.shape)
+print("Combined signals created. Shape:", signals_all.shape)
 
 # 4) Portfolio optimization – compare all strategies
 print("\nPortfolio Optimization")
