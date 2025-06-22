@@ -89,6 +89,7 @@ def main ():
     bt = Backtester(prices_all, signals_all, weights_dict)
     ec, bc, log = bt.run(cost=0.0015, slip=0.001, bench='^NSEI')
     bt.print_summary(strategy_name=best_method)
+    bt.save_trades()
 
     # 6) Risk evaluation
     rm = RiskManager(ec)

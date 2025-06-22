@@ -53,20 +53,23 @@ class Backtester:
         self.benchmark_curve = (1 + bench_ret.iloc[1:]).cumprod() * self.capital
         return self.equity_curve, self.benchmark_curve, self.log
 
-    def print_trades(self):
+    def save_trades(self, filepath='transactions.csv'):
+        records = []
         for date, val, trades in self.log:
-            if not trades:
-                continue
-            print(f"\n\U0001F4C6 {date.strftime('%Y-%m-%d')}")
-            print(f"Portfolio Value: ₹{val:,.2f}")
-            print("Executed Trades:")
-            total_cost = 0
             for t, (d, p, f) in trades.items():
                 action = 'BUY' if d > 0 else 'SELL'
-                print(f"  {t}: {action} {abs(d):.2f} shares @ ₹{p:.2f}")
-                total_cost += f
-            print(f"Total Transaction Cost: ₹{total_cost:.2f}")
-            print("-" * 50)
+                records.append({
+                    'date': date.strftime('%Y-%m-%d'),
+                    'portfolio_value': val,
+                    'ticker': t,
+                    'action': action,
+                    'shares': abs(d),
+                    'price': p,
+                    'fee': f
+                })
+        df = pd.DataFrame(records)
+        df.to_csv(filepath, index=False)
+        print(f"✅ Trades saved to {filepath}")
 
     def metrics(self):
         r = self.equity_curve.pct_change().dropna()
