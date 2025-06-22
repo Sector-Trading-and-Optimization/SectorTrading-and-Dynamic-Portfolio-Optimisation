@@ -119,6 +119,7 @@ class Banking(Tech):
 
 def main():
     start, end = '2020-01-01', '2023-12-31'
+
     f = FMCG(["HINDUNILVR.NS", "NESTLEIND.NS"], start, end)
     t = Tech(["INFY.NS", "TCS.NS"], start, end)
     b = Banking(["HDFCBANK.NS", "ICICIBANK.NS", "AXISBANK.NS"], start, end)
@@ -166,4 +167,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
