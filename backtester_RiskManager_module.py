@@ -1,12 +1,9 @@
-#Portfolio Construction
-
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-# === Backtester ===
 class Backtester:
     def __init__(self, prices, signals, weights, capital=1e6):
         ticks = set(prices.columns) & set(signals.columns) & set(weights)
@@ -60,7 +57,7 @@ class Backtester:
         for date, val, trades in self.log:
             if not trades:
                 continue
-            print(f"\n📆 {date.strftime('%Y-%m-%d')}")
+            print(f"\n\U0001F4C6 {date.strftime('%Y-%m-%d')}")
             print(f"Portfolio Value: ₹{val:,.2f}")
             print("Executed Trades:")
             total_cost = 0
@@ -97,15 +94,14 @@ class Backtester:
         mdd = float(m["Max Drawdown"])
 
         print("\n" + "="*60)
-        print("✅ Analysis Complete!")
-        print(f"🕐 Finished at: {datetime.now():%Y-%m-%d %H:%M:%S}")
+        print("\u2705 Analysis Complete!")
+        print(f"⏰ Finished at: {datetime.now():%Y-%m-%d %H:%M:%S}")
         print("\n📋 Executive Summary:")
         print(f"   • Portfolio Strategy: {strategy_name}")
         print(f"   • Final Value: ₹{fpv:,.2f}")
         print(f"   • Total Return: {tr:.2%}")
         print(f"   • Sharpe Ratio: {sr:.3f}")
         print(f"   • Max Drawdown: {mdd:.2%}")
-
 
     def plot(self):
         plt.figure(figsize=(10, 5))
@@ -118,7 +114,7 @@ class Backtester:
         plt.grid(True)
         plt.show()
 
-# === Risk Manager ===
+
 class RiskManager:
     def __init__(self, equity_curve, max_dd=0.2, vol_th=0.25):
         self.ec = equity_curve
@@ -148,25 +144,3 @@ class RiskManager:
         draw = (self.ec - self.ec.cummax()) / self.ec.cummax()
         axs[1].fill_between(draw.index, draw, 0, alpha=0.3); axs[1].set_title('Drawdown')
         plt.tight_layout(); plt.show()
-
-
-# === Main ===
-def main():
-    # Data imports
-    from stock_selection import prices_all, signals_all, weights_dict
-
-    bt = Backtester(prices_all, signals_all, weights_dict)
-    ec, bc, log = bt.run(cost=0.0015, slip=0.001, bench='^NSEI')
-
-    # bt.print_trades()
-    bt.print_summary(strategy_name='Mean-Variance')
-
-    rm = RiskManager(ec)
-    ra = rm.assess()
-    print(f"\nRisk Level: {ra['Level']}, Score: {ra['Score']}, Action: {ra['Action']}")
-    if ra['Flags']:
-        print("Flags:", ', '.join(ra['Flags']))
-    rm.plot()
-
-if __name__ == '__main__':
-    main()
