@@ -62,28 +62,17 @@ def main ():
     print("\nPortfolio Optimization")
     optimizer = Optimizer(returns_all)
 
-    strategies = {
-        'Mean-Variance': optimizer.mean_variance(),
-        'Minimum-Variance': optimizer.min_variance(),
-        'Risk-Parity'  : optimizer.risk_parity()
-    }
-
-    best_sharpe = -np.inf
-    for name, (w, _) in strategies.items():
-        port_ret  = w @ optimizer.mu * 252
-        port_risk = np.sqrt(w @ optimizer.cov @ w) * np.sqrt(252)
-        sharpe    = port_ret / port_risk if port_risk > 0 else 0
-        if sharpe > best_sharpe:
-            best_sharpe = sharpe
-            best_method = name
-            best_weights = w
+    best_weights, best_method = optimizer.mean_variance()
+    port_ret  = best_weights @ optimizer.mu * 252
+    port_risk = np.sqrt(best_weights @ optimizer.cov @ best_weights) * np.sqrt(252)
+    best_sharpe = port_ret / port_risk if port_risk > 0 else 0
 
     weights_dict = dict(zip(tickers, best_weights))
-    print(f"🎯 Selected Strategy: {best_method} (Sharpe={best_sharpe:.3f})")
+    print(f" Selected Strategy: {best_method} (Sharpe={best_sharpe:.3f})")
     for tk, wt in weights_dict.items():
         print(f"  {tk}: {wt:.2%}")
 
-    optimizer.plot_portfolio_comparison()
+    # optimizer.plot_portfolio_comparison()
 
     # 5) Backtesting
     bt = Backtester(prices_all, signals_all, weights_dict)
