@@ -9,16 +9,16 @@ def fetch_price_data(tickers, start, end):
     prices = pd.DataFrame()
     for t in tickers:
         try:
-            data = yf.download(t, start=start, end=end, auto_adjust=True, progress=False)
+            data = yf.download(t, start=start, end=end, auto_adjust=True, progress=False) #autoadjst:Ensures dividends /splits are accounted for
             prices[t] = data['Close']
         except:
             continue
     prices.dropna(axis=1, inplace=True)
-    returns = prices.pct_change().dropna()
+    returns = prices.pct_change().dropna() # to calculate daily returns for optimization.
     return prices, returns
 
 def fetch_pe_ratios(tickers):
-    return {t: yf.Ticker(t).info.get('trailingPE', np.nan) for t in tickers}
+    return { t: yf.Ticker(t).info.get('trailingPE', np.nan)  for t in tickers } 
 
 class Sector:
     def __init__(self, tickers, start, end):

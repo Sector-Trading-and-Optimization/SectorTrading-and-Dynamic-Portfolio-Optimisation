@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from ta.momentum import RSIIndicator
 from sector_base import Sector
 
-class FMCG(Sector):
+class FMCG (Sector) :
     def score(self):
         best, best_score = None, -np.inf
         for t, r in self.returns.items():
@@ -21,7 +21,7 @@ class FMCG(Sector):
         upper, lower = ma + n * std, ma - n * std
         sig = pd.Series(0, index=price.index)
         sig[price > upper] = 1
-        sig[price < lower] = -1
+        sig[price < lower] = -1 # momentum breakout strategy
         return ma, upper, lower, sig
 
     @staticmethod
@@ -38,8 +38,8 @@ class Tech(Sector):
         best, best_score = None, -np.inf
         for t in self.prices.columns:
             p = self.prices[t]
-            if len(p) < 126: continue
-            m6 = p.iloc[-1] / p.iloc[-126] - 1
+            if len(p) < 126: continue # getting six months of data
+            m6 = p.iloc[-1] / p.iloc[-126] - 1 #per rtn over 6 months
             v = self.returns[t].std()
             rs = RSIIndicator(p).rsi().iloc[-1]
             pe = self.pe.get(t, np.nan)
